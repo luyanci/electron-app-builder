@@ -29,10 +29,10 @@ jobs:
           nativefier --name lilegeli --portable https://lilegeli.netlify.app
           ls
       - name: Package Bundle
-        working-directory: 
-        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip lilegeli-${{ runner.OS }}-${{ runner.arch }}
+        working-directory: .
+        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip lilegeli-${{ runner.OS }}-${{ runner.arch }}/*
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: lilegeli-${{ runner.OS }}-x64
+          name: lilegeli-${{ runner.OS }}-${{ runner.arch }}
           path: lilegeli-*.zip
