@@ -30,7 +30,7 @@ jobs:
           ls
       - name: Package Bundle
         working-directory: .
-        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip lilegeli-${{ runner.OS }}-${{ runner.arch }}/*
+        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip lilegeli-${{ runner.OS }}-x64
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
