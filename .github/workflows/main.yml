@@ -26,5 +26,5 @@ jobs:
         run: npm install nativefier -g
       - name: Build
         run:  |
-          nativefier --name lilegeli ` --portable https://lilegeli.netlify.app
+          nativefier --name lilegeli --portable https://lilegeli.netlify.app
           ls
