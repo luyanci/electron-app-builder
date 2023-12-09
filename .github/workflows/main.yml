@@ -1,4 +1,4 @@
-name: Pages
+name: Build
 
 on:
   workflow_dispatch:
@@ -28,3 +28,11 @@ jobs:
         run:  |
           nativefier --name lilegeli --portable https://lilegeli.netlify.app
           ls
+      - name: Package Bundle
+        working-directory: 
+        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip lilegeli-${{ runner.OS }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lilegeli-${{ runner.OS }}-x64
+          path: lilegeli-*.zip
