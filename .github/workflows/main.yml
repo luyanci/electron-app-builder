@@ -34,20 +34,20 @@ jobs:
         run: npm install nativefier -g
       - name: Build
         run:  |
-          nativefier --name lilegeli --portable https://lilegeli.netlify.app
+          nativefier --name  ${{ github.event.inputs.name }} --portable  ${{ github.event.inputs.link }}
           ls
       - name: Package Bundle
-        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip ./lilegeli-linux-x64
+        run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}.zip ./${{ github.event.inputs.name }}-linux-x64
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: lilegeli-${{ runner.OS }}-${{ runner.arch }}
-          path: lilegeli-*.zip
+          name: ${{ github.event.inputs.name }}-${{ runner.OS }}-${{ runner.arch }}
+          path: ${{ github.event.inputs.name }}-*.zip
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-              tag_name: release
-              files: ./**/lilegeli-${{ runner.OS }}.zip
+              tag_name: ${{ github.event.inputs.name }}-release
+              files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}.zip
   buildpackage-windows:
     runs-on: windows-latest
     permissions:
@@ -70,7 +70,7 @@ jobs:
       - name: Build x86_64
         run:  |
           nativefier --name lilegeli --portable https://lilegeli.netlify.app
-      - name: Package Bundle xo86_64
+      - name: Package Bundle x86_64
         run: 7z a -tzip lilegeli-${{ runner.OS }}-${{ runner.arch }}.zip ./lilegeli-win32-x64
       - name: Upload Artifact all
         uses: actions/upload-artifact@v3
