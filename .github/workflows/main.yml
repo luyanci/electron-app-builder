@@ -69,19 +69,19 @@ jobs:
         run: npm install nativefier -g
       - name: Build x86_64
         run:  |
-          nativefier --name lilegeli --portable https://lilegeli.netlify.app
+          nativefier --name ${{ github.event.inputs.name }} --portable  ${{ github.event.inputs.link }}
       - name: Package Bundle x86_64
-        run: 7z a -tzip lilegeli-${{ runner.OS }}-${{ runner.arch }}.zip ./lilegeli-win32-x64
+        run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}-${{ runner.arch }}.zip ./${{ github.event.inputs.name }}-win32-x64
       - name: Upload Artifact all
         uses: actions/upload-artifact@v3
         with:
-          name: lilegeli-${{ runner.OS }}-x86
-          path: lilegeli-${{ runner.OS }}*.zip
+          name: ${{ github.event.inputs.name }}-${{ runner.OS }}-x86
+          path: ${{ github.event.inputs.name }}-${{ runner.OS }}*.zip
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-            tag_name: release
-            files: ./**/lilegeli-${{ runner.OS }}*.zip
+            tag_name: ${{ github.event.inputs.name }}-release
+            files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}*.zip
   buildpackage-macos:
     runs-on: macos-latest
     permissions:
@@ -102,16 +102,16 @@ jobs:
       - name: Install Dependencies
         run: npm install nativefier -g
       - name: Build
-        run:  nativefier --name lilegeli --portable https://lilegeli.netlify.app
+        run:  nativefier --name ${{ github.event.inputs.name }}  --portable  ${{ github.event.inputs.link }}
       - name: Package Bundle
-        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip ./lilegeli-darwin-x64
+        run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}.zip ./${{ github.event.inputs.name }}-darwin-x64
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: lilegeli-${{ runner.OS }}-${{ runner.arch }}
-          path: lilegeli-*.zip
+          name: ${{ github.event.inputs.name }}-${{ runner.OS }}-${{ runner.arch }}
+          path: ${{ github.event.inputs.name }}-*.zip
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-            tag_name: release
-            files: ./**/lilegeli-${{ runner.OS }}.zip
+            tag_name: ${{ github.event.inputs.name }}-release
+            files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}.zip
