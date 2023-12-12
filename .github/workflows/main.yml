@@ -13,7 +13,7 @@ on:
         default: "lilegeli"
  
 jobs:
-  buildpackage:
+  buildpackage-Linux:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -43,3 +43,75 @@ jobs:
         with:
           name: lilegeli-${{ runner.OS }}-${{ runner.arch }}
           path: lilegeli-*.zip
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+              tag_name: release
+              files: ./**/lilegeli-${{ runner.OS }}.zip
+  buildpackage-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+      - name: Cache NPM dependencies
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-npm-cache
+          restore-keys: |
+            ${{ runner.OS }}-npm-cache
+      - name: Install Dependencies
+        run: npm install nativefier -g
+      - name: Build x86_64
+        run:  |
+          nativefier --name lilegeli --portable https://lilegeli.netlify.app
+      - name: Package Bundle xo86_64
+        run: 7z a -tzip lilegeli-${{ runner.OS }}-${{ runner.arch }}.zip ./lilegeli-win32-x64
+      - name: Upload Artifact all
+        uses: actions/upload-artifact@v3
+        with:
+          name: lilegeli-${{ runner.OS }}-x86
+          path: lilegeli-${{ runner.OS }}*.zip
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+            tag_name: release
+            files: ./**/lilegeli-${{ runner.OS }}*.zip
+  buildpackage-macos:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+      - name: Cache NPM dependencies
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-npm-cache
+          restore-keys: |
+            ${{ runner.OS }}-npm-cache
+      - name: Install Dependencies
+        run: npm install nativefier -g
+      - name: Build
+        run:  nativefier --name lilegeli --portable https://lilegeli.netlify.app
+      - name: Package Bundle
+        run: 7z a -tzip lilegeli-${{ runner.OS }}.zip ./lilegeli-darwin-x64
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lilegeli-${{ runner.OS }}-${{ runner.arch }}
+          path: lilegeli-*.zip
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+            tag_name: release
+            files: ./**/lilegeli-${{ runner.OS }}.zip
