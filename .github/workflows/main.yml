@@ -13,12 +13,11 @@ on:
         default: "lilegeli"
  
 jobs:
-  buildpackage-Linux:
+  buildpackage:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
       - name: Use Node.js 18.x
         uses: actions/setup-node@v2
         with:
@@ -41,56 +40,4 @@ jobs:
         with:
               tag_name: ${{ github.event.inputs.name }}-release
               files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}.zip
-  buildpackage-windows:
-    runs-on: windows-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: "18"
-      - name: Install Dependencies
-        run: npm install nativefier -g
-      - name: Build x86_64
-        run:  |
-          nativefier --name ${{ github.event.inputs.name }} --portable  ${{ github.event.inputs.link }}
-      - name: Package Bundle x86_64
-        run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}-${{ runner.arch }}.zip ./${{ github.event.inputs.name }}-win32-x64
-      - name: Upload Artifact all
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.event.inputs.name }}-${{ runner.OS }}-x86
-          path: ${{ github.event.inputs.name }}-${{ runner.OS }}*.zip
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-            tag_name: ${{ github.event.inputs.name }}-release
-            files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}*.zip
-  buildpackage-macos:
-    runs-on: macos-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: "18"
-      - name: Install Dependencies
-        run: npm install nativefier -g
-      - name: Build
-        run:  nativefier --name ${{ github.event.inputs.name }}  --portable  ${{ github.event.inputs.link }}
-      - name: Package Bundle
-        run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}.zip ./${{ github.event.inputs.name }}-darwin-x64
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.event.inputs.name }}-${{ runner.OS }}-${{ runner.arch }}
-          path: ${{ github.event.inputs.name }}-*.zip
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-            tag_name: ${{ github.event.inputs.name }}-release
-            files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}.zip
+  
