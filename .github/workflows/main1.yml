@@ -1,0 +1,47 @@
+name: Build vercel/Netlify
+
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: "link"
+        required: true
+        default: "Netlify"
+        type: choice
+        options:
+          - "Netlify"
+          - "vercel"
+      name:
+        description: "app name"
+        required: true
+        default: "lilegeli"
+
+jobs:
+  buildpackage:
+    strategy:
+      matrix:
+        os: [ubuntu,macos,Windows]
+    runs-on: ${{matrix.os}}-latest
+    steps:
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Install Dependencies
+        run: npm install nativefier -g
+      - name: Build
+        run:  |
+          nativefier --name  ${{ github.event.inputs.name }} --portable  ${{ github.event.inputs.link }}
+          ls
+      - name: Package Bundle
+        run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}.zip ./${{ github.event.inputs.name }}-*
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.inputs.name }}-${{ runner.OS }}-${{ runner.arch }}
+          path: ${{ github.event.inputs.name }}-*.zip
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+              tag_name: ${{ github.event.inputs.name }}-release
+              files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}.zip
