@@ -29,9 +29,15 @@ jobs:
           node-version: "18"
       - name: Install Dependencies
         run: npm install nativefier -g
-      - name: Build
+      - name: Build(Netlify)
+        if: github.event.inputs.platfroms == 'Netlify'
         run:  |
-          nativefier --name  ${{ github.event.inputs.name }} --portable  ${{ github.event.inputs.link }}
+          nativefier --name  ${{ github.event.inputs.name }} --portable  https://${{ github.event.inputs.name }}.netlify.app
+          ls
+      - name: Build(vercel)
+        if: github.event.inputs.platfroms == 'vercel'
+        run:  |
+          nativefier --name  ${{ github.event.inputs.name }} --portable  https://${{ github.event.inputs.link }}.vercel.app
           ls
       - name: Package Bundle
         run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}.zip ./${{ github.event.inputs.name }}-*
