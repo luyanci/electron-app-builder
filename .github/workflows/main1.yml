@@ -6,7 +6,7 @@ on:
       platforms:
         description: "link"
         required: true
-        default: "Netlify"
+        default: "netlify"
         type: choice
         options:
           - "netlify"
@@ -30,7 +30,6 @@ jobs:
       - name: Install Dependencies
         run: npm install nativefier -g
       - name: Build(${{github.event.inputs.platforms}})
-        if: 
         run:  |
           nativefier --name  ${{ github.event.inputs.name }} --portable  https://${{ github.event.inputs.name }}.${{ github.event.inputs.platforms }}.app
           ls
