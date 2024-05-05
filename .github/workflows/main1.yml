@@ -9,7 +9,7 @@ on:
         default: "Netlify"
         type: choice
         options:
-          - "Netlify"
+          - "netlify"
           - "vercel"
       name:
         description: "app name"
@@ -29,15 +29,10 @@ jobs:
           node-version: "18"
       - name: Install Dependencies
         run: npm install nativefier -g
-      - name: Build(Netlify)
-        if: ${{github.event.inputs.platforms == 'Netlify'}}
+      - name: Build(${{github.event.inputs.platforms}})
+        if: 
         run:  |
-          nativefier --name  ${{ github.event.inputs.name }} --portable  https://${{ github.event.inputs.name }}.netlify.app
-          ls
-      - name: Build(vercel)
-        if: ${{github.event.inputs.platforms == 'vercel'}}
-        run:  |
-          nativefier --name  ${{ github.event.inputs.name }} --portable  https://${{ github.event.inputs.link }}.vercel.app
+          nativefier --name  ${{ github.event.inputs.name }} --portable  https://${{ github.event.inputs.name }}.${{ github.event.inputs.platforms }}.app
           ls
       - name: Package Bundle
         run: 7z a -tzip ${{ github.event.inputs.name }}-${{ runner.OS }}.zip ./${{ github.event.inputs.name }}-*
@@ -49,5 +44,5 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-              tag_name: ${{ github.event.inputs.name }}-release
+              tag_name: ${{ github.event.inputs.name }}-${{ github.event.inputs.platforms }}-release
               files: ./**/${{ github.event.inputs.name }}-${{ runner.OS }}.zip
